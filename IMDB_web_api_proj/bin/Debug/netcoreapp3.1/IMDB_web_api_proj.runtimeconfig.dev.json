@@ -1,0 +1,8 @@
+{
+  "runtimeOptions": {
+    "additionalProbingPaths": [
+      "C:\\Users\\Shedge\\.dotnet\\store\\|arch|\\|tfm|",
+      "C:\\Users\\Shedge\\.nuget\\packages"
+    ]
+  }
+}
