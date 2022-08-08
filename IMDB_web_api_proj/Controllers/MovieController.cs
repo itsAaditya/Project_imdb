@@ -23,6 +23,38 @@ namespace IMDB_web_api_proj.Controllers
         }
 
 
+        //Get details of a movie
+        [HttpGet("{id}")]
+        public JsonResult Get(int id)
+        {
+            string query = @"
+                            SELECT mov.movie_name, mov.plot, mov.release_date, prod.producer_name, act.actor_name
+                            FROM movie mov
+                            INNER JOIN actor act ON mov.actor_id = act.actor_id
+                            INNER JOIN producer prod ON mov.producer_id   = prod.producer_id
+                            Where mov.movie_id = @movie_id";
+
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("IMDBApp");
+            MySqlDataReader myReader;
+            using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+            {
+                mycon.Open();
+                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                {
+                    myCommand.Parameters.AddWithValue("@movie_id", id);
+
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+
+                    myReader.Close();
+                    mycon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
         //Get all the movie
         [HttpGet]
         public JsonResult Get()
@@ -155,35 +187,6 @@ namespace IMDB_web_api_proj.Controllers
         }
 
 
-        [HttpGet("{id}")]
-        public JsonResult Get(int id)
-        {
-            string query = @"
-                            SELECT mov.movie_name, mov.plot, mov.release_date, prod.producer_name, act.actor_name
-                            FROM movie mov
-                            INNER JOIN actor act ON mov.actor_id = act.actor_id
-                            INNER JOIN producer prod ON mov.producer_id   = prod.producer_id
-                            Where mov.movie_id = @movie_id";
-          
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("IMDBApp");
-            MySqlDataReader myReader;
-            using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
-            {
-                mycon.Open();
-                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
-                {
-                    myCommand.Parameters.AddWithValue("@movie_id", id);
-
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
-                }
-            }
-
-            return new JsonResult(table);
-        }
+      
     }
 }
