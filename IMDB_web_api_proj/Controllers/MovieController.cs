@@ -60,7 +60,10 @@ namespace IMDB_web_api_proj.Controllers
         public JsonResult Get()
         {
             string query = @"
-                            select * from movie";
+                            SELECT mov.movie_name, mov.plot, mov.release_date, prod.producer_name, act.actor_name
+                            FROM movie mov
+                            INNER JOIN actor act ON mov.actor_id = act.actor_id
+                            INNER JOIN producer prod ON mov.producer_id   = prod.producer_id";
 
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("IMDBApp");
